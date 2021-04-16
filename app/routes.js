@@ -18,6 +18,17 @@ module.exports = function(app, passport, db) {
         })
     });
 
+    //PERSONAL SECTION
+    app.get('/personal', isLoggedIn, function(req, res) {
+        db.collection('messages').find().toArray((err, result) => {
+          if (err) return console.log(err)
+          res.render('personal.ejs', {
+            user : req.user,
+            messages: result
+          })
+        })
+    });
+
     // LOGOUT ==============================
     app.get('/logout', function(req, res) {
         req.logout();
@@ -27,7 +38,7 @@ module.exports = function(app, passport, db) {
 // message board routes ===============================================================
 
     app.post('/messages', (req, res) => {
-      db.collection('messages').save({name: req.body.name, msg: req.body.msg, thumbUp: 0, thumbDown:0}, (err, result) => {
+      db.collection('messages').save({name: req.body.name, typ: req.body.typ, bs: req.body.bs, thumbUp: 0, thumbDown:0}, (err, result) => {
         if (err) return console.log(err)
         console.log('saved to database')
         res.redirect('/profile')
@@ -36,7 +47,7 @@ module.exports = function(app, passport, db) {
 
     app.put('/messages', (req, res) => {
       db.collection('messages')
-      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
+      .findOneAndUpdate({name: req.body.name, typ: req.body.typ, bs: req.body.bs}, {
         $set: {
           thumbUp:req.body.thumbUp + 1
         }
@@ -49,8 +60,23 @@ module.exports = function(app, passport, db) {
       })
     })
 
+    app.put('/thumbDown', (req, res) => {
+      db.collection('messages')
+      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
+        $set: {
+          thumbUp:req.body.thumbUp - 1
+        }
+      }, {
+        sort: {_id: -1},
+        upsert: true
+      }, (err, result) => {
+        if (err) return res.send(err)
+        res.send(result)
+      })
+    })
+
     app.delete('/messages', (req, res) => {
-      db.collection('messages').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {
+      db.collection('messages').findOneAndDelete({name: req.body.name, typ: req.body.typ, bs: req.body.bs}, (err, result) => {
         if (err) return res.send(500, err)
         res.send('Message deleted!')
       })
@@ -76,14 +102,36 @@ module.exports = function(app, passport, db) {
 
         // SIGNUP =================================
         // show the signup form
-        app.get('/signup', function(req, res) {
-            res.render('signup.ejs', { message: req.flash('signupMessage') });
+        app.get('/signup-user', function(req, res) {
+            res.render('signup-user.ejs', { message: req.flash('signupMessage') });
         });
 
         // process the signup form
-        app.post('/signup', passport.authenticate('local-signup', {
+        app.post('/signup-user', passport.authenticate('local-signup', {
             successRedirect : '/profile', // redirect to the secure profile section
-            failureRedirect : '/signup', // redirect back to the signup page if there is an error
+            failureRedirect : '/signup-user', // redirect back to the signup page if there is an error
+            failureFlash : true // allow flash messages
+        }));
+
+        app.get('/signup-business', function(req, res) {
+            res.render('signup-business.ejs', { message: req.flash('signupMessage') });
+        });
+
+        app.post('/signup-business', passport.authenticate('local-signup', {
+            successRedirect : '/profile', // redirect to the secure profile section
+            failureRedirect : '/signup-business', // redirect back to the signup page if there is an error
+            failureFlash : true // allow flash messages
+        }));
+
+
+        app.get('/signup-business', function(req, res) {
+            res.render('signup-business.ejs', { message: req.flash('signupMessage') });
+        });
+
+
+        app.post('/profile', passport.authenticate('local-signup', {
+            successRedirect : '/profile', // redirect to the secure profile section
+            failureRedirect : '/signup-user', // redirect back to the signup page if there is an error
             failureFlash : true // allow flash messages
         }));
 
