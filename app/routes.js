@@ -1,16 +1,42 @@
-module.exports = function(app, passport, db) {
+module.exports = function(app, passport, db, multer) {
+
+  var ObjectId = require('mongodb').ObjectId;
 
 // normal routes ===============================================================
-
+app.get('/feed', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
+  db.collection('messages').find().toArray((err, result) => {//go to collection, find specific one, place in array
+    if (err) return console.log(err)// if the response is an err
+    res.render('feed.ejs', {//if response is good render the profile page
+      user : req.user, //results from the collection
+      messages: result
+    })
+  })
+});//get request that brings us to our profile after login
     // show the home page (will also have our login links)
     app.get('/', function(req, res) {
         res.render('index.ejs');
     });
 
+    app.get('/personal/:personalID', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
+    const param = req.params.personalID
+    console.log(param);
+      db.collection('messages').find({_id: ObjectId(param)}).toArray((err, result) => {//go to collection, find specific one, place in array
+
+        if (err) return console.log(err)// if the response is an err
+        console.log(result);
+        res.render('personal.ejs', {//if response is good render the profile page
+          user : req.user, //results from the collection
+          messages: result
+        })
+      })
+  });
+
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function(req, res) {
-        db.collection('messages').find().toArray((err, result) => {
+      console.log(req.user._id)
+        db.collection('messages').find({userID: String(req.user._id)}).toArray((err, result) => {
           if (err) return console.log(err)
+          console.log(result)
           res.render('profile.ejs', {
             user : req.user,
             messages: result
@@ -20,7 +46,7 @@ module.exports = function(app, passport, db) {
 
     //PERSONAL SECTION
     app.get('/personal', isLoggedIn, function(req, res) {
-        db.collection('messages').find().toArray((err, result) => {
+        db.collection('messages').find({userID: String(req.user._id)}).toArray((err, result) => {
           if (err) return console.log(err)
           res.render('personal.ejs', {
             user : req.user,
@@ -35,15 +61,61 @@ module.exports = function(app, passport, db) {
         res.redirect('/');
     });
 
-// message board routes ===============================================================
+  //
+  //
+  //   var storage = multer.diskStorage({
+  // destination: (req, file, cb) => {
+  //   cb(null,'public/img')
+  //   console.log("1",file);
+  // },
+  // filename: (req, file, cb) => {
+  //   cb(null, file.fieldname + '-' + Date.now() + ".png")
+  //       console.log("2", file);
+  // }
+  // })
+  // var upload = multer({storage: storage})
+  //   app.post('/messages', upload.array('file-to-upload', 3), (req, res) => {
+  //     // console.log(req.body["file-to-upload"]);
+  //     // 'img/' +
+  //     console.log(req.files);
+  //     db.collection('messages').save({name: req.body.name, typ: req.body.typ, bs: req.body.bs, posterID: req.user._id, thumbUp: 0, thumbDown:0, images: req.files.map(f => 'img/' + f.filename)}, (err, result) => {
+  //       if (err) return console.log(err)
+  //       console.log('saved to database')
+  //       res.redirect('/feed')
+  //     })
+  //   })
 
-    app.post('/messages', (req, res) => {
-      db.collection('messages').save({name: req.body.name, typ: req.body.typ, bs: req.body.bs, thumbUp: 0, thumbDown:0}, (err, result) => {
+
+  var storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/img/')
+    console.log("1",file);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + Date.now() + ".png")
+        console.log("2", file);
+  }
+})
+var upload = multer({storage: storage})
+    app.post('/messages', upload.array('file-to-upload', 3), (req, res) => {
+      // console.log(req.body["file-to-upload"]);
+      // 'img/' +
+      console.log(req.files);
+      db.collection('messages').save({typ: req.body.typ, bs: req.body.bs, userID: req.body.userID, house: req.files.map(f => 'img/' + f.filename)}, (err, result) => {
         if (err) return console.log(err)
         console.log('saved to database')
-        res.redirect('/profile')
+        res.redirect('/personal')
       })
     })
+// message board routes ===============================================================
+
+    // app.post('/messages', (req, res) => {
+    //   db.collection('messages').save({name: req.body.name, typ: req.body.typ, bs: req.body.bs, thumbUp: 0, thumbDown:0}, (err, result) => {
+    //     if (err) return console.log(err)
+    //     console.log('saved to database')
+    //     res.redirect('/personal')
+    //   })
+    // })
 
     app.put('/messages', (req, res) => {
       db.collection('messages')
@@ -124,16 +196,29 @@ module.exports = function(app, passport, db) {
         }));
 
 
-        app.get('/signup-business', function(req, res) {
-            res.render('signup-business.ejs', { message: req.flash('signupMessage') });
-        });
+        // app.get('/profile', function(req, res) {
+        //     res.render('profile.ejs', { message: req.flash('profileMessage') });
+        // });
+        //
+        //
+        // app.post('/profile', passport.authenticate('local-profile', {
+        //     successRedirect : '/personal', // redirect to the secure profile section
+        //     failureRedirect : '/profile', // redirect back to the signup page if there is an error
+        //     failureFlash : true // allow flash messages
+        // }));
 
 
-        app.post('/profile', passport.authenticate('local-signup', {
-            successRedirect : '/profile', // redirect to the secure profile section
-            failureRedirect : '/signup-user', // redirect back to the signup page if there is an error
-            failureFlash : true // allow flash messages
-        }));
+        // app.get('/private', function(req, res) {
+        //     res.render('profile.ejs', { message: req.flash('signupMessage') });
+        // });
+        //
+        //
+        // app.post('/profile', passport.authenticate('local-profile', {
+        //     successRedirect : '/profile', // redirect to the secure profile section
+        //     failureRedirect : '/signup-user', // redirect back to the signup page if there is an error
+        //     failureFlash : true // allow flash messages
+        // }));
+
 
 // =============================================================================
 // UNLINK ACCOUNTS =============================================================

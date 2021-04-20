@@ -16,13 +16,14 @@
 
     <div class="row">
         <div class="col-sm-6">
-          <form class="messages" action="index.html" method="post">
-            <input type="\button" name="" value="">
+          <form class="messages" action="/personal" method="post">
+            <input type="button" name="" value="">
           </form>
           <h3>Messages</h3>
           <ul class="messages">
           <% for(var i=0; i<messages.length; i++) {%>
             <li class="message">
+              <img src="<%= messages[i].house[0] %>" alt="<%= user._id%>">
               <span><%= messages[i].typ %></span>
               <span><%= messages[i].bs %></span>
 
@@ -32,7 +33,7 @@
             </li>
           <% } %>
           </ul>
-                <p><a href="/personal.ejs">Edit Account</a></p>
+                <p><a href="/personal">Edit Account</a></p>
         </div>
 
 </div>
