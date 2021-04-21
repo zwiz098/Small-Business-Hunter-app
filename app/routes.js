@@ -21,15 +21,42 @@ module.exports = function(app, passport, db, multer) {
         })
       })
   });
+  app.post('/zoom', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
 
+    // let searchTag = {}
+    // let searchTp = {}
+    // if (req.query.searchTag){
+    //   searchTag = {tags: {'$regex':req.query.searchTag}}
+    // }
+    // else if(req.query.searchTp){
+    //   searchTp = {typ:
+    //   {'$regex':req.query.searchTp}}
+    // }
+
+    db.collection('messages').find({tags: {$regex: `${req.body.searchTag}`}}).toArray((err, result) => {//go to collection, find specific one, place in array
+      console.log(result)
+      if (err) return console.log(err)// if the response is an err
+      res.render('feed.ejs', {//if response is good render the profile page
+        user : req.user, //results from the collection
+        messages: result
+      })
+    })
+  });
 
   app.get('/feed', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
 
-    let search = {}
-    if (req.query.search){
-      search = {tags: {'$regex':req.query.search}}
-    }
-    db.collection('messages').find(search).toArray((err, result) => {//go to collection, find specific one, place in array
+    // let searchTag = {}
+    // let searchTp = {}
+    // if (req.query.searchTag){
+    //   searchTag = {tags: {'$regex':req.query.searchTag}}
+    // }
+    // else if(req.query.searchTp){
+    //   searchTp = {typ:
+    //   {'$regex':req.query.searchTp}}
+    // }
+
+    db.collection('messages').find().toArray((err, result) => {//go to collection, find specific one, place in array
+      console.log(result)
       if (err) return console.log(err)// if the response is an err
       res.render('feed.ejs', {//if response is good render the profile page
         user : req.user, //results from the collection
@@ -63,6 +90,7 @@ module.exports = function(app, passport, db, multer) {
           })
         })
     });
+
 
     //PERSONAL SECTION
     app.get('/personal', isLoggedIn, function(req, res) {
@@ -251,6 +279,7 @@ var upload = multer({storage: storage})
     app.get('/unlink/local', isLoggedIn, function(req, res) {
         var user            = req.user;
         user.local.email    = undefined;
+        user.local.compname    = undefined;
         user.local.password = undefined;
         user.save(function(err) {
             res.redirect('/profile');
