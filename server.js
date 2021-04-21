@@ -17,10 +17,15 @@ var session      = require('express-session');
 
 var multer       = require("multer")
 var configDB = require('./config/database.js');
-
+// const io = require('socket.io')(3000)
 var db
 
 // configuration ===============================================================
+// io.on('connection', socket => {
+//   console.log('new user')
+//   socket.emit('chat-message, 'Helllo World)
+// })
+
 mongoose.connect(configDB.url, (err, database) => {
   if (err) return console.log(err)
   db = database

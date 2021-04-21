@@ -3,15 +3,6 @@ module.exports = function(app, passport, db, multer) {
   var ObjectId = require('mongodb').ObjectId;
 
 // normal routes ===============================================================
-app.get('/feed', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
-  db.collection('messages').find().toArray((err, result) => {//go to collection, find specific one, place in array
-    if (err) return console.log(err)// if the response is an err
-    res.render('feed.ejs', {//if response is good render the profile page
-      user : req.user, //results from the collection
-      messages: result
-    })
-  })
-});//get request that brings us to our profile after login
     // show the home page (will also have our login links)
     app.get('/', function(req, res) {
         res.render('index.ejs');
@@ -31,6 +22,35 @@ app.get('/feed', isLoggedIn, function(req, res) {//get request that takes in loc
       })
   });
 
+
+  app.get('/feed', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
+
+    let search = {}
+    if (req.query.search){
+      search = {tags: {'$regex':req.query.search}}
+    }
+    db.collection('messages').find(search).toArray((err, result) => {//go to collection, find specific one, place in array
+      if (err) return console.log(err)// if the response is an err
+      res.render('feed.ejs', {//if response is good render the profile page
+        user : req.user, //results from the collection
+        messages: result
+      })
+    })
+  });//get request that brings us to our profile after login
+
+  app.get('/post/:postID', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
+        const param = req.params.postID
+        console.log(param);
+          db.collection('messages').find({_id: ObjectId(param)}).toArray((err, result) => {//go to collection, find specific one, place in array
+
+            if (err) return console.log(err)// if the response is an err
+            console.log(result);
+            res.render('post.ejs', {//if response is good render the profile page
+              user : req.user, //results from the collection
+              messages: result
+            })
+          })
+      });
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function(req, res) {
       console.log(req.user._id)
@@ -101,7 +121,7 @@ var upload = multer({storage: storage})
       // console.log(req.body["file-to-upload"]);
       // 'img/' +
       console.log(req.files);
-      db.collection('messages').save({typ: req.body.typ, bs: req.body.bs, userID: req.body.userID, house: req.files.map(f => 'img/' + f.filename)}, (err, result) => {
+      db.collection('messages').save({typ: req.body.typ, bs: req.body.bs, tags: req.body.tags, userID: req.body.userID, house: req.files.map(f => 'img/' + f.filename)}, (err, result) => {
         if (err) return console.log(err)
         console.log('saved to database')
         res.redirect('/personal')
@@ -119,7 +139,7 @@ var upload = multer({storage: storage})
 
     app.put('/messages', (req, res) => {
       db.collection('messages')
-      .findOneAndUpdate({name: req.body.name, typ: req.body.typ, bs: req.body.bs}, {
+      .findOneAndUpdate({name: req.body.name, typ: req.body.typ, bs: req.body.bs, tags: req.body.tags}, {
         $set: {
           thumbUp:req.body.thumbUp + 1
         }
@@ -148,7 +168,7 @@ var upload = multer({storage: storage})
     })
 
     app.delete('/messages', (req, res) => {
-      db.collection('messages').findOneAndDelete({name: req.body.name, typ: req.body.typ, bs: req.body.bs}, (err, result) => {
+      db.collection('messages').findOneAndDelete({name: req.body.name, typ: req.body.typ, bs: req.body.bs, tags: req.body.tags}, (err, result) => {
         if (err) return res.send(500, err)
         res.send('Message deleted!')
       })

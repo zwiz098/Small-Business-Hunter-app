@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+    <title>InstaClone</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+
+    <div class="page-header text-center">
+        <h1><span class="fa fa-anchor"></span> <%= user.local.username%></h1>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+    </div>
+
+    <div class="row">
+
+        <!-- LOCAL INFORMATION -->
+
+        <div class="col-sm-6">
+          <h3>Messages</h3>
+          <ul class="messages">
+          <% for(var i=0; i<messages.length; i++) {%>
+
+            <li class="message">
+              <p><%= messages[i].house[0] %></p>
+              <a href="/post/<%= messages[i]._id %>"><img src="../<%= messages[i].house[0] %>" alt="image"></a>
+              <span><%= messages[i].name %></span>
+              <span><%= messages[i].typ %></span>
+              <span><%= messages[i].bs %></span>
+              <span><%= messages[i].tags %></span>
+
+            </li>
+
+          <% } %>
+          </ul>
+        </div>
+    </div>
+</div>
+<script src="main.js"></script>
+
+</body>
+</html>
