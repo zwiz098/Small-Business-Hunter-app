@@ -4,7 +4,7 @@
     <title>InstaClone</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style3.css">
 </head>
 <body>
   <div class="container">
@@ -26,14 +26,14 @@
         <input type="search" placeholder="Search business type" name="searchTp" value="">
         <button type="submit" name="button">Search</button>
       </form>
-      <h3>Messages</h3>
+      <h3>Profile</h3>
       <ul class="messages">
       <% for(var i=0; i<messages.length; i++) {%>
 
         <li class="message">
 
           <a href="/post/<%= messages[i]._id %>"><img src="<%= messages[i].house[0] %>" alt=""></a>
-
+            <a href="/post/<%= messages[i]._id %>"><img src="<%= messages[i].house[1] %>" alt=""></a>
           <a href="/profile"><span><%= messages[i].name %></span></a>
 
           <span>TYPE OF BUSINESS:<%= messages[i].typ %></span>

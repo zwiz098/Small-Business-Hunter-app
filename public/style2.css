@@ -1,0 +1,11 @@
+body{
+  background-color: rgba(239,193,255)
+}
+.col-sm-6{
+  background-image: url('/img/back.png');
+  padding-top:80px;
+  word-wrap:break-word;
+}
+img{
+  height: 200px;
+}

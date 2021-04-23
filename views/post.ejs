@@ -24,8 +24,8 @@
           <% for(var i=0; i<messages.length; i++) {%>
 
             <li class="message">
-              <p><%= messages[i].house[0] %></p>
               <a href="/post/<%= messages[i]._id %>"><img src="../<%= messages[i].house[0] %>" alt="image"></a>
+              <a href="/post/<%= messages[i]._id %>"><img src="../<%= messages[i].house[1] %>" alt="image"></a>
               <span><%= messages[i].name %></span>
               <span><%= messages[i].typ %></span>
               <span><%= messages[i].bs %></span>

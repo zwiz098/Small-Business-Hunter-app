@@ -268,6 +268,18 @@ var upload = multer({storage: storage})
     // locally --------------------------------
         // LOGIN ===============================
         // show the login form
+        app.get('/index', function(req, res) {
+            res.render('index.ejs', { message: req.flash('loginMessage') });
+        });
+
+        // process the login form
+        app.post('/index', passport.authenticate('local-login', {
+            successRedirect : '/lead', // redirect to the secure profile section
+            failureRedirect : '/index', // redirect back to the signup page if there is an error
+            failureFlash : true // allow flash messages
+        }));
+
+
         app.get('/login', function(req, res) {
             res.render('login.ejs', { message: req.flash('loginMessage') });
         });
