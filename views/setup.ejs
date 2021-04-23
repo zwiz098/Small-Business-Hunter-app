@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+    <title>21 Savage Fan Site</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <div class="col-sm-6 col-sm-offset-3">
+
+      <h1><span class="fa fa-sign-in"></span> Your Info</h1>
+
+      <!-- LOGIN FORM -->
+      <form action="/setup" method="POST">
+        <div class="form-group">
+            <label>Company Name</label>
+            <input type="text" class="form-control" name="compName">
+        </div>
+        <div class="form-group">
+            <label>Number of Employees in your Organization </label>
+            <input type="number" class="form-control" name="employeeNum" />
+        </div>
+        <div class="form-group">
+            <label>Your Role</label>
+            <input type="text" class="form-control" name="role">
+        </div>
+        <div class="form-group">
+            <label>First Name</label>
+            <input type="text" class="form-control" name="firstname">
+        </div>
+        <div class="form-group">
+            <label>Last Name </label>
+            <input type="text" class="form-control" name="lastname">
+        </div>
+
+
+        <button type="submit" class="btn btn-warning btn-lg">Submit</button>
+      </form>
+
+
+      <p>Already have an account? <a href="/login">Login</a></p>
+      <p>Or go <a href="/">home</a>.</p>
+
+  </div>
+</div>
+</body>
+</html>

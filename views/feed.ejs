@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+    <title>InstaClone</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+  <!-- LOCAL INFORMATION -->
+  <div class="page-header text-center">
+    <h1><span class="fa fa-anchor"></span> <%= user.local.username%></h1>
+    <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+</div>
+
+<div class="row">
+
+    <!-- LOCAL INFORMATION -->
+
+    <div class="col-sm-6">
+      <form class="" action="/zoom" method="POST">
+        <input type="search" placeholder="Search for tags" name="searchTag" value="">
+        <button type="submit" name="button">Search</button>
+
+        <input type="search" placeholder="Search business type" name="searchTp" value="">
+        <button type="submit" name="button">Search</button>
+      </form>
+      <h3>Messages</h3>
+      <ul class="messages">
+      <% for(var i=0; i<messages.length; i++) {%>
+
+        <li class="message">
+
+          <a href="/post/<%= messages[i]._id %>"><img src="<%= messages[i].house[0] %>" alt=""></a>
+
+          <a href="/profile"><span><%= messages[i].name %></span></a>
+
+          <span>TYPE OF BUSINESS:<%= messages[i].typ %></span>
+          <span>BUSINESS DESCRIPTION:<%= messages[i].bs %></span>
+          <span>TAGS:<%= messages[i].tags %></span>
+          <button type="button" name="button" class="btn"><i class="fa fa-bullseye" aria-hidden="true"></i></button>
+        </li>
+
+      <% } %>
+      </ul>
+    <%  { %>
+    </div>
+    <% } %>
+
+
+      <a href="/profile">View Profile</a>
+
+  </div>
+<script src="main.js"></script>
+
+</body>
+</html>

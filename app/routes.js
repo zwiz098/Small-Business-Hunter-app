@@ -43,7 +43,8 @@ module.exports = function(app, passport, db, multer) {
     })
   });
 
-  app.get('/feed', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
+
+  app.post('/zoom', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
 
     // let searchTag = {}
     // let searchTp = {}
@@ -55,6 +56,17 @@ module.exports = function(app, passport, db, multer) {
     //   {'$regex':req.query.searchTp}}
     // }
 
+    db.collection('messages').find({tags: {$regex: `${req.body.searchTag}`}}).toArray((err, result) => {//go to collection, find specific one, place in array
+      console.log(result)
+      if (err) return console.log(err)// if the response is an err
+      res.render('feed.ejs', {//if response is good render the profile page
+        user : req.user, //results from the collection
+        messages: result
+      })
+    })
+  });
+
+  app.get('/feed', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
     db.collection('messages').find().toArray((err, result) => {//go to collection, find specific one, place in array
       console.log(result)
       if (err) return console.log(err)// if the response is an err
@@ -81,12 +93,20 @@ module.exports = function(app, passport, db, multer) {
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function(req, res) {
       console.log(req.user._id)
-        db.collection('messages').find({userID: String(req.user._id)}).toArray((err, result) => {
+        db.collection('messages').find({userID: String(req.user._id)}).toArray((err, messages) => {
           if (err) return console.log(err)
-          console.log(result)
-          res.render('profile.ejs', {
-            user : req.user,
-            messages: result
+
+          db.collection('userInfo').findOne({userID: String(req.user._id)}).then(userInfo => {
+            console.log(userInfo)
+            console.log(req.user)
+            if(userInfo == null){
+              userInfo = {compName: ''}
+            }
+            res.render('profile.ejs', {
+              user: req.user,
+              userInfo: userInfo,
+              messages: messages
+            })//render
           })
         })
     });
@@ -101,6 +121,43 @@ module.exports = function(app, passport, db, multer) {
             messages: result
           })
         })
+    });
+
+    app.get('/setup', isLoggedIn, function(req, res) {
+        db.collection('userInfo').find({userID: String(req.user._id)}).toArray((err, result) => {
+          if (err) return console.log(err)
+          res.render('setup.ejs', {
+            user : req.user,
+            messages: result
+          })
+        })
+    });
+
+    app.post('/setup', isLoggedIn, function(req, res) {
+      db.collection('userInfo').findOneAndUpdate({userID: String(req.user._id)}, {
+          $set: {
+            compName: req.body.compName,
+            employeeNum: req.body.employeeNum,
+            role: req.body.role,
+            firstname: req.body.firstname,
+            lastname: req.body.lastname
+          }//set
+        },//curly db collection
+        {
+          upsert: true
+        }, (err, result) => {
+          if (err) return res.send(err)
+          db.collection('messages').find({userID: String(req.user._id)}).toArray((err, result) => {
+            if (err) return console.log(err)
+
+            res.render('profile.ejs', {
+              user: req.user,
+              userInfo: req.body,
+              messages: result
+            })//render
+          })//close DB collection
+        }//139
+      )//findone})
     });
 
     // LOGOUT ==============================
@@ -195,6 +252,8 @@ var upload = multer({storage: storage})
       })
     })
 
+
+
     app.delete('/messages', (req, res) => {
       db.collection('messages').findOneAndDelete({name: req.body.name, typ: req.body.typ, bs: req.body.bs, tags: req.body.tags}, (err, result) => {
         if (err) return res.send(500, err)
@@ -238,7 +297,7 @@ var upload = multer({storage: storage})
         });
 
         app.post('/signup-business', passport.authenticate('local-signup', {
-            successRedirect : '/profile', // redirect to the secure profile section
+            successRedirect : '/setup', // redirect to the secure profile section
             failureRedirect : '/signup-business', // redirect back to the signup page if there is an error
             failureFlash : true // allow flash messages
         }));
