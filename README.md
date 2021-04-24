@@ -24,10 +24,10 @@ Small Business Hunter is that new way to find small businesses that you want to 
 - syntax: As there where many features, it was hard to keep track of the type of syntax to use and for what
 - chat feature: tried to implement socket io
 
-Some things that I enjoyed about the project: 
+### Some things that I enjoyed about the project: 
 
 - Seeing my ideas come to life!: It was awesome to see that I could code a site from scratch, and with my nown idea behind it! I loved working on this site and look forward to continue to make it even better!
 
 # Visit my site!
--https://small-business-hunter.herokuapp.com/
+https://small-business-hunter.herokuapp.com/
 
