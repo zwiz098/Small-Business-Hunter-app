@@ -1,4 +1,4 @@
-# Horoscope Genorator
+# Small Business Hunter
 
 ![image](https://user-images.githubusercontent.com/77587592/115947691-518acd00-a497-11eb-9c91-ff702504e9a3.png)
 
