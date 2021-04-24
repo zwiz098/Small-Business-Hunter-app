@@ -10,7 +10,7 @@ This app idea came to me when I first started my freelancing business. I wanted 
 
 Small Business Hunter is that new way to find small businesses that you want to support!
 
-#Project Features:
+### Project Features:
 
 -Chat feature with business and user
 -Rating
@@ -18,7 +18,7 @@ Small Business Hunter is that new way to find small businesses that you want to 
 -Bookmarking
 -Search by filter
 
-#Some things I struggled to accomplish with the project:
+### Some things I struggled to accomplish with the project:
 
 - Creating a search by filter: I had to implement some code that I was unfamilier with like "regex"
 - syntax: As there where many features, it was hard to keep track of the type of syntax to use and for what
