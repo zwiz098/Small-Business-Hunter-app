@@ -1,8 +1,8 @@
 var thumbUp = document.getElementsByClassName("fa-thumbs-up");
 var thumbDown = document.getElementsByClassName("fa-thumbs-down");
 var trash = document.getElementsByClassName("fa-trash");
-var target = document.getElementsByClassName("fa-bulls");
-
+var target = document.getElementsByClassName("fa-bullseye");
+console.log(target)
 Array.from(thumbUp).forEach(function(element) {
       element.addEventListener('click', function(){
         const name = this.parentNode.parentNode.childNodes[1].innerText
@@ -18,6 +18,7 @@ Array.from(thumbUp).forEach(function(element) {
             'typ': typ,
             'bs': bs,
             'tags': tags,
+            'target': target,
             'thumbUp':thumbUp
           })
         })
@@ -33,20 +34,16 @@ Array.from(thumbUp).forEach(function(element) {
 
 Array.from(target).forEach(function(element) {
       element.addEventListener('click', function(){
-        const name = this.parentNode.parentNode.childNodes[1].innerText
-        const typ = this.parentNode.parentNode.childNodes[3].innerText
-        const bs = this.parentNode.parentNode.childNodes[5].innerText
-        const tags = this.parentNode.parentNode.childNodes[7].innerText
-        const thumbUp = parseFloat(this.parentNode.parentNode.childNodes[9].innerText)
-        fetch('messages', {
-          method: 'put',
+        const id = element.parentNode.parentNode.id
+        const busdes = element.parentNode.parentNode.childNodes[9].innerText
+        console.log(id, this)
+        fetch('bookmarks', {
+          method: 'post',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
-            'name': name,
-            'typ': typ,
-            'bs': bs,
-            'tags': tags,
-            'thumbUp':thumbUp
+            message_id: id,
+            busdes: busdes
+
           })
         })
         .then(response => {

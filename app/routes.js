@@ -96,6 +96,7 @@ module.exports = function(app, passport, db, multer) {
         db.collection('messages').find({userID: String(req.user._id)}).toArray((err, messages) => {
           if (err) return console.log(err)
 
+//create db for bookmarks
           db.collection('userInfo').findOne({userID: String(req.user._id)}).then(userInfo => {
             console.log(userInfo)
             console.log(req.user)
@@ -105,7 +106,8 @@ module.exports = function(app, passport, db, multer) {
             res.render('profile.ejs', {
               user: req.user,
               userInfo: userInfo,
-              messages: messages
+              messages: messages,
+              bookmars: bookmars
             })//render
           })
         })
@@ -205,10 +207,10 @@ var upload = multer({storage: storage})
     app.post('/messages', upload.array('file-to-upload', 3), (req, res) => {
       // console.log(req.body["file-to-upload"]);
       // 'img/' +
-      console.log(req.files);
+      console.log("Files are", req.files);
       db.collection('messages').save({typ: req.body.typ, bs: req.body.bs, tags: req.body.tags, userID: req.body.userID, house: req.files.map(f => 'img/' + f.filename)}, (err, result) => {
         if (err) return console.log(err)
-        console.log('saved to database')
+        console.log('saved new message to database')
         res.redirect('/personal')
       })
     })
@@ -250,6 +252,22 @@ var upload = multer({storage: storage})
         if (err) return res.send(err)
         res.send(result)
       })
+    })
+
+    app.post('/bookmarks', (req, res) => {
+      console.log("creatingBookmark", req.body)
+      db.collection('bookmarks')
+      .save( {
+            userID: req.user._id,
+            message_id:req.body.message_id,
+            busdes: req.body.busdes
+
+        },(err, result) => {
+          if (err) return console.log(err)
+          console.log('saved to database')
+          res.redirect('/feed')
+        }
+      )
     })
 
 
