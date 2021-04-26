@@ -44,7 +44,7 @@ module.exports = function(app, passport, db, multer) {
   });
 
 
-  app.post('/zoom', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
+  // app.post('/zoom', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
 
     // let searchTag = {}
     // let searchTp = {}
@@ -56,15 +56,15 @@ module.exports = function(app, passport, db, multer) {
     //   {'$regex':req.query.searchTp}}
     // }
 
-    db.collection('messages').find({tags: {$regex: `${req.body.searchTag}`}}).toArray((err, result) => {//go to collection, find specific one, place in array
-      console.log(result)
-      if (err) return console.log(err)// if the response is an err
-      res.render('feed.ejs', {//if response is good render the profile page
-        user : req.user, //results from the collection
-        messages: result
-      })
-    })
-  });
+  //   db.collection('messages').find({tags: {$regex: `${req.body.searchTag}`}}).toArray((err, result) => {//go to collection, find specific one, place in array
+  //     console.log(result)
+  //     if (err) return console.log(err)// if the response is an err
+  //     res.render('feed.ejs', {//if response is good render the profile page
+  //       user : req.user, //results from the collection
+  //       messages: result
+  //     })
+  //   })
+  // });
 
   app.get('/feed', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
     db.collection('messages').find().toArray((err, result) => {//go to collection, find specific one, place in array
@@ -76,6 +76,24 @@ module.exports = function(app, passport, db, multer) {
       })
     })
   });//get request that brings us to our profile after login
+
+  // 
+  // app.post('/bookmarks', (req, res) => {
+  //   console.log("creatingBookmark", req.body)
+  //   db.collection('bookmarks')
+  //   .save( {
+  //         userID: req.user._id,
+  //         message_id:req.body.message_id,
+  //         busdes: req.body.busdes
+  //
+  //     },(err, result) => {
+  //       if (err) return console.log(err)
+  //       console.log('saved to database')
+  //       res.redirect('/feed')
+  //     }
+  //   )
+  // })
+
 
   app.get('/post/:postID', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
         const param = req.params.postID
@@ -90,6 +108,8 @@ module.exports = function(app, passport, db, multer) {
             })
           })
       });
+
+
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function(req, res) {
       console.log(req.user._id)
@@ -107,7 +127,7 @@ module.exports = function(app, passport, db, multer) {
               user: req.user,
               userInfo: userInfo,
               messages: messages,
-              bookmars: bookmars
+              // bookmarks: bookmarks
             })//render
           })
         })
@@ -252,22 +272,6 @@ var upload = multer({storage: storage})
         if (err) return res.send(err)
         res.send(result)
       })
-    })
-
-    app.post('/bookmarks', (req, res) => {
-      console.log("creatingBookmark", req.body)
-      db.collection('bookmarks')
-      .save( {
-            userID: req.user._id,
-            message_id:req.body.message_id,
-            busdes: req.body.busdes
-
-        },(err, result) => {
-          if (err) return console.log(err)
-          console.log('saved to database')
-          res.redirect('/feed')
-        }
-      )
     })
 
 
