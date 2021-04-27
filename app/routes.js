@@ -77,22 +77,22 @@ module.exports = function(app, passport, db, multer) {
     })
   });//get request that brings us to our profile after login
 
-  // 
-  // app.post('/bookmarks', (req, res) => {
-  //   console.log("creatingBookmark", req.body)
-  //   db.collection('bookmarks')
-  //   .save( {
-  //         userID: req.user._id,
-  //         message_id:req.body.message_id,
-  //         busdes: req.body.busdes
-  //
-  //     },(err, result) => {
-  //       if (err) return console.log(err)
-  //       console.log('saved to database')
-  //       res.redirect('/feed')
-  //     }
-  //   )
-  // })
+
+  app.post('/bookmarks', (req, res) => {
+    console.log("creatingBookmark", req.body)
+    db.collection('bookmarks')
+    .save( {
+          userID: req.user._id,
+          message_id:req.body.message_id,
+          busdes: req.body.busdes
+
+      },(err, result) => {
+        if (err) return console.log(err)
+        console.log('saved to database')
+        res.redirect('/feed')
+      }
+    )
+  })
 
 
   app.get('/post/:postID', isLoggedIn, function(req, res) {//get request that takes in location, 2 functions as arguments
@@ -111,26 +111,22 @@ module.exports = function(app, passport, db, multer) {
 
 
     // PROFILE SECTION =========================
-    app.get('/profile', isLoggedIn, function(req, res) {
+    app.get('/profile', isLoggedIn, async function (req, res) {
       console.log(req.user._id)
-        db.collection('messages').find({userID: String(req.user._id)}).toArray((err, messages) => {
-          if (err) return console.log(err)
-
-//create db for bookmarks
-          db.collection('userInfo').findOne({userID: String(req.user._id)}).then(userInfo => {
-            console.log(userInfo)
-            console.log(req.user)
-            if(userInfo == null){
-              userInfo = {compName: ''}
-            }
-            res.render('profile.ejs', {
-              user: req.user,
-              userInfo: userInfo,
-              messages: messages,
-              // bookmarks: bookmarks
-            })//render
-          })
-        })
+      const messages = await db.collection('messages').find({ userID: String(req.user._id) }).toArray();
+      const bookmarks = await db.collection('bookmarks').find().toArray();
+      const userInfo = db.collection('userInfo').findOne({ userID: String(req.user._id) })
+      console.log(userInfo)
+      console.log(req.user)
+      if (userInfo == null) {
+        userInfo = { compName: '' }
+      }
+      res.render('profile.ejs', {
+        user: req.user,
+        userInfo: userInfo,
+        messages: messages,
+        bookmarks: bookmarks
+      })//render
     });
 
 
