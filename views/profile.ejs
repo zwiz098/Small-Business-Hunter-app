@@ -39,7 +39,9 @@
             <ul class="messages">
           <% for(var i=0; i<messages.length; i++) {%>
             <li class="message">
-              <a href="/post/<%= bookmarks[i].busdes %>"></a>
+              <a href="/post">
+                <span><%= bookmarks[i].busdes %></span>
+              </a>
             </li>
           <% } %>
           </ul>
