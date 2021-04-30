@@ -15,7 +15,7 @@ Small Business Hunter is that new way to find small businesses that you want to 
 -Chat feature with business and user
 -Rating
 -Comment
--Bookmarking
+-Bookmarking 
 -Search by filter 
 
 ### Some things I struggled to accomplish with the project:
